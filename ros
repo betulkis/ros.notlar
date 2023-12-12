@@ -1,0 +1,787 @@
+source /opt/ros/foxy/setup.bash  rosta her komuttan önce bunu kullan !!!
+
+termianlleri kapatmandan devam et 
+ros2 run turtlesim turtlesim_node !!!  
+Turtlesimi başlatır simülasyon penceresi ortasında rasgele bir kaplumbağa olacak şekilde görünmelidir. Terminalde komutun altında mesajları görürüz:
+[INFO] [turtlesim]: Starting turtlesim with node name /turtlesim
+[INFO] [turtlesim]: Spawning turtle [turtle1] at x=[5.544445], y=[5.544445], theta=[0.000000]
+Burada varsayılan kaplumbağanın adını ve ortaya çıktığı koordinatları görebilirsiniz.
+
+Turtlesimi kullan
+yeni bir terminal aç ! 
+ve ROS2 yi kaynakla ! yani source /opt/ros/foxy/setup.bash  rosta her komuttan önce bunu kullan 
+kaplumbağayı kontrol etmek için
+ros2 run turtlesim turtle_teleop_key   !!!
+turlesim_node terminali ve turtle_teleop_key ve turtlesim window(kaplumbağa) açık olmalı 
+turtle_taleop_key de iken kaplumbağayı hareket ettireceğiz yön tuşları ile
+
+bir ok tuşuna basmak kaplumbağanın yalnızca kısa bir mesafe hareket etmesine ve ardında durmasına neden olur.Bunun nedeni gerçekçi olarak örneğin operatörün robotla bağlantısını kaybetmesi durumunda bir robotun bir talimatı sürdürmeye devam etmesini istemememizdir
+
+BİLGİ aşağı yukarı yön tuşları daha önceden girdiğin komutları getiriyor tekrar yazmana gerek kalmıyor
+
+yeni bir terminalde
+sudo apt update
+sudo apt install ~nros-foxy-rqt* ile rqt yi yükle
+sonra yüklenip yüklenmediğini kontol etmek için yeni terminalaçtığımız için source yi getir her rosta kullanman gerekn 1.komutu yaz sonra rqt yazıp rqt yi aç
+
+rqt ile /spawnda 2.kaplumbağa ekleme Bunun yaparken önceki terminallerin açık olsun 
+servicelerden /spawn ı  seç ve ordan yeni kamplumbağa meydana getireceğiz
+name string '' alanında tırnakların arasına çift tıklayarak kaplumbağana isim ver = turtle2 
+bu ifade string tipinde name
+daha sonra
+yeni kaplumbağanın ortaya çıkacağı x=1.0 y=1.0 gibi koordinatlar gir !
+x float 0.0 satırında 0.0da çift tıkla değeri gir !
+sonra call de !
+ve artık 2 kaplumbağan var ama 1tanesi hareket etmiyor onu da hareket ettireceğiz
+
+service den /turtle1/set_pen ile turtle 1 in çizgisini değiştireceğiz
+r  g  b değerleri 0 ile 255 arasındadır
+r  g  b kaplumbağanın çizdiği kalemin rengini , genişliğini ve çizginin kalınlığını belirler.
+
+turtle1 in belirgin kırmızı çizgi ile çizilmesi için
+r 255 yaz
+width 5 yaz
+call demeyi unutma 
+sonra turtle_teleop_key aç ve oklarla turtle1i hareket ettir artık kırmızı kalın çizgiyle hareket edecek turtle2 hareketsiz duruyor olacak
+çünkü turtle 2 için teleop node yok  turtle_teleop_key yok  
+
+turtle 2 yi çalıştırmak için yeni terminal aç!!!!
+source-kaynak-yapmayı unutma her yeni terminalde rosu 2 yi çalıştırmak için bu komutu girmen gerekir
+!!!
+ros2 run turtlesim turtle_teleop_key --ros-args --remap turtle1/cmd_vel:=turtle2/cmd_vel
+
+bunu yaz ve artık 2.kaplumbağan çalışıyor
+
+3.kaplumbağa ekleme:
+ros2 run turtlesim turtle_teleop_key --ros-args --remap turtle1/cmd_vel:=turtle3/cmd_vel
+
+4.kaplumbağa hareket ettirme
+ros2 run turtlesim turtle_teleop_key --ros-args --remap turtle1/cmd_vel:=turtle4/cmd_vel
+
+5.kaplumbağa hareket ettirme
+ros2 run turtlesim turtle_teleop_key --ros-args --remap turtle1/cmd_vel:=turtle5/cmd_vel
+
+UNDERSTANDİNG NODES
+
+ROS2 graph : ROS grafiği verileri aynı anda birlikte işleyen ROS2 elemanlarından oluşan bir ağdır.Hepsini haritalandırıp görselleştiriseniz tüm yürütülebilir dosyaları ve aralarındaki bağlantıları kapsar.
+Nodes in ROS2: ROStaki her düğüm tek bir modüler amaçtan sorumlu olmalıdır.tekerlek motorlarını kontrol etmek veya bir lazer mesafe bulucudan sensör verilerini yayınlamak. Her düğüm,konular,hizmetler,eylemler veya parametreler aracılığıyla diğer düğümlerden veri gönderip alabilir.
+Tam bir robotik sistem, uyum içinde çalışan birçok düğümden oluşur.ROS2de tek bir yürütülebilir dosya bir veya daha fazla düğüm içerebilir.
+
+ros2 node list size çalışan tüm düğümlerin adlarını gösterir.Bu özellikle bir düğümle etkileşim kurmak istediğinizce veya çok sayıda düğüm çalıştıran bir sisteminiz olduğunda ve bunları takip etmeniz gerektiğinde kullanışlıdır.
+ 
+ ros2 run turtlesim turtlesim_node
+diğer terminalde kaplumbağa çalışırken yeni bir termianal aç ve şu komutu gir:
+ros2 node list
+
+/turtlesim
+
+başka bir terminal açın ve teleop düğümünü node şu komutla başltın:
+ros2 run turtlesim turtle_teleop_key
+
+Burda yine turtlesim paketinden bahsediyoruz ancak bu sefer turtle_teleop_key isimli çalıştırılabilir dosyayı hedef alıyoruz.
+
+ros2 node list terminalini aç ve tekrar çalıştır artık 2 aktif düğüm adını göreceksin.
+
+/turtlesim
+/teleop_turtle
+yazar
+
+yeni bir terminal aç
+
+Remapping yeniden eşleme
+remapping düğüm adı,konu adları,hizmet adları vb. gibi varsayılan düğüm özelliklerini özel değerlere yeniden atamanıza olanak tanır
+
+Yeniden eşleme, düğüm adı, konu adları, hizmet adları vb. gibi varsayılan düğüm özelliklerini özel değerlere yeniden atamanıza olanak tanır. Son eğitimde cmd_vel konusunu değiştirmek ve kaplumbağa2'yi hedeflemek için kaplumbağa_teleop_key üzerinde yeniden eşlemeyi kullandınız.
+
+Şimdi /turtlesim düğümümüzün ismini yeniden atayalım. Yeni bir terminalde aşağıdaki komutu çalıştırın:
+
+ros2 run turtlesim turtlesim_node --ros-args --remap __node:=my_turtle
+
+çalıştırdığında başka bir kaplumbağa penceresi açılacaktır ama şimdi ros2 node list çalıştırdığınız terminale dönüp tekrar çalıştırırsanız üç tane node name göreceksin:
+
+/turtlesim
+/teleop_turtle
+/my_turtle
+
+Artık düğümlerinizin adlarını bildiğinize göre, onlar hakkında daha fazla bilgiye şu yollarla erişebilirsiniz:
+
+ros2 node info <node_name>  bu kodu değil ama node name yerine baika şeyler gelecek alttaki gibi
+
+En son düğümünüz my_turtle'ı incelemek için aşağıdaki komutu çalıştırın:
+
+ros2 node info /my_turtle
+
+çıktıda:
+ros2 düğüm bilgisi abonelerin, yayıncıların, hizmetlerin ve eylemlerin bir listesini döndürür. yani o düğümle etkileşime giren ROS grafiği bağlantıları.
+
+ros2 node info /teleop_turtle  =teleop turle için aynı bilgileri verir
+
+node düğüm, robotik sistemde tek, modüler bir amaca hizmet eden temel bir ROS 2 öğesidir.
+
+
+UNDERSTANDİNG TOPİCS
+
+ROS 2, karmaşık sistemleri birçok modüler düğüme ayırır. Topics, düğümlerin nodes mesaj alışverişinde bulunması için bir veri yolu görevi gören ROS grafiğinin hayati bir öğesidir.
+
+Bir node, herhangi bir sayıda topics e  veri yayınlayabilir ve aynı anda herhangi bir sayıda konuya aboneliğe sahip olabilir.
+
+Topics, verilerin düğümlerin ( nodes )arasında ve dolayısıyla sistemin farklı bölümleri arasında taşınmasının ana yollarından biridir.
+
+Her zaman olduğu gibi açtığınız her yeni terminalde ROS 2'yi kaynaklamayı unutmayın.
+
+yeni terminal aç ve
+ros2 run turtlesim turtlesim_node 
+çalıştır
+
+Başka bir terminal açın ve çalıştırın:
+
+ros2 run turtlesim turtle_teleop_key
+
+Önceki dersten bu düğümlerin adlarının varsayılan olarak /turtlesim ve /teleop_turtle olduğunu hatırlayın.
+
+Bu eğitim boyunca değişen nodesleri ve topicleri ve aralarındaki bağlantıları görselleştirmek için rqt_graph'ı kullanacağız.
+
+rqt_graph'ı çalıştırmak için yeni bir terminal açın ve şu komutu girin:
+
+rqt_graph
+
+çıkan ekranı rqt yazıp şu şekilde de açabilirdin
+ Plugins > Introspection > Node Graph
+ 
+ Grafik, /turtlesim node ve /teleop_turtle node bir konu üzerinden birbirleriyle nasıl iletişim kurduğunu göstermektedir. 
+ 
+ 
+ vurgulama 
+Rqt_graph'ın vurgulama özelliği, birçok düğümün ve konunun birçok farklı şekilde birbirine bağlandığı daha karmaşık sistemleri incelerken çok faydalıdır.
+
+rqt_graph grafiksel bir iç gözlem aracıdır.
+
+/teleop_turtle düğümü, verileri (kaplumbağayı hareket ettirmek için girdiğiniz tuş vuruşlarını) /turtle1/cmd_vel konusuna yayınlıyor ve /turtlesim düğümü, verileri almak için bu konuya abone oluyor.
+
+
+ros2 topic list 
+
+komutunu yeni bir terminalde çalıştırmak, sistemde o anda aktif olan tüm konuların bir listesini döndürecektir:
+çıktı
+/parameter_events
+/rosout
+/turtle1/cmd_vel
+/turtle1/color_sensor
+/turtle1/pose
+
+ros2 topic list -t
+
+aynı konu listesini döndürür, bu sefer konu türü parantez içine eklenmiş olarak:
+yani çıktı
+/parameter_events [rcl_interfaces/msg/ParameterEvent]
+/rosout [rcl_interfaces/msg/Log]
+/turtle1/cmd_vel [geometry_msgs/msg/Twist]
+/turtle1/color_sensor [turtlesim/msg/Color]
+/turtle1/pose [turtlesim/msg/Pose]
+
+ROS2 TOPİC ECHO
+
+Bir konu hakkında yayınlanan verileri görmek için şunu kullanın:
+
+ros2 topic echo /turtle1/cmd_vel
+
+lk başta bu komut herhangi bir veri döndürmez. Bunun nedeni /teleop_turtle'ın bir şeyler yayınlamasını beklemesidir.
+
+Turtle_teleop_key'in çalıştığı terminale dönün ve kaplumbağayı hareket ettirmek için okları kullanın. Echo'nuzun aynı anda çalıştığı terminali izleyin; yaptığınız her hareket için konum verilerinin yayınlandığını göreceksiniz:
+linear:
+  x: 2.0
+  y: 0.0
+  z: 0.0
+angular:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+  ---
+  
+  Şimdi rqt_graph'a dönün ve Hata Ayıklama kutusunun işaretini kaldırın.
+debug box
+
+/_ros2cli_26646 az önce çalıştırdığımız echo komutu tarafından oluşturulan düğümdür (sayı farklı olabilir). Artık yayıncının cmd_vel konusu üzerinden veri yayınladığını ve iki abonenin buna abone olduğunu görebilirsiniz.
+
+ros2 topic info
+
+Topicslerin yalnızca bire bir iletişim olması gerekmez; bire çok, çoktan bire veya çoktan çoğa olabilirler.
+buna bakmanın yolu:
+
+ros2 topic info /turtle1/cmd_vel
+
+çıktı Type: geometry_msgs/msg/Twist
+Publisher count: 1
+Subscription count: 2
+
+ros2 interface show   ros2 arayüz gösterisi
+
+Nodes ler, mesajları kullanarak Topics ler üzerinden veri gönderir. Yayıncıların ve abonelerin iletişim kurabilmeleri için aynı türde mesaj gönderip almaları gerekir.
+
+Daha önce running ros2 topic list -t çalıştırdıktan sonra gördüğümüz konu türleri, her konuda hangi mesaj türünün kullanıldığını bize bildirir. cmd_vel konusunun şu türde olduğunu hatırlayın:
+
+geometry_msgs/msg/Twist
+
+Bu, geometry_msgs paketinde Twist adında bir msg olduğu anlamına gelir.
+
+Artık ayrıntılarını öğrenmek için bu tip üzerinde ros2 interface show <msg type>  komutunu çalıştırabiliriz.
+
+Yukarıdan gelen mesaj türü için şunu verir:
+
+# This expresses velocity in free space broken into its linear and angular parts.
+
+    Vector3  linear
+    Vector3  angular
+    
+Bu size /turtlesim düğümünün, her biri üç öğeden oluşan doğrusal ve açısal iki vektör içeren bir mesaj beklediğini söyler. 
+
+
+ros2 topic pub
+
+
+ verileri doğrudan komut satırından bir topics e yayınlayabilirsiniz:
+
+ros2 topic pub <topic_name> <msg_type> '<args>'  ile
+
+'<args>' argümanı, önceki bölümde keşfettiğiniz yapıda, konuya ileteceğiniz gerçek verilerdir.
+
+Bu bağımsız değişkenin YAML sözdiziminde girilmesi gerektiğini unutmamak önemlidir. Tam komutu şu şekilde girin:
+
+!!!
+
+ros2 topic pub --once /turtle1/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 2.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 1.8}}"    
+
+
+-once "bir mesajı yayınla ve çık" anlamına gelen isteğe bağlı bir argümandır.
+
+kaplumbağa yuvarlak çizer
+
+
+Kaplumbağa (ve genellikle taklit edilmesi amaçlanan gerçek robotlar), sürekli çalışabilmek için sabit bir komut akışına ihtiyaç duyar. Yani kaplumbağanın hareket etmeye devam etmesini sağlamak için:
+
+!!!
+
+ros2 topic pub --rate 1 /turtle1/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 2.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 1.8}}"
+
+
+Buradaki fark --once seçeneğinin kaldırılması ve ros2 topic pub  ına komutu 1Hz de sabit bir akışta yayınlanmasını söyleyen --rate 1 seçeneğinin eklenmesidir.
+
+ros2 topic hz /turtle1/pose
+:
+/turtlesim nodeununu pose topicsine veri yayınlama hızına ilişkin verileri döndürecektir.
+
+çalışan çok sayıda düğümünüz olacak.
+Her terminalde Ctrl+C tuşlarına basarak onları durdurmayı unutmayın.
+
+
+SERVİCES
+
+Hizmetler, ROS grafiğindeki düğümler için başka bir iletişim yöntemidir.
+
+Topics, nodeslerin veri akışlarına abone olmasına ve sürekli güncelleme almasına izin verirken, services yalnızca bir istemci tarafından özel olarak çağrıldıklarında veri sağlar.
+ 
+bir terminalde
+
+ros2 run turtlesim turtlesim_node
+
+diğer terminalde
+
+ros2 run turtlesim turtle_teleop_key
+
+başka bir terminalde de sistemde o anda aktif olan tüm servislerin bir listesini döndürecektir:
+
+ros2 service list
+------------------------------
+
+ros2 service type: bir services türünü bulmak için şu komutu kullan:
+
+ros2 service type <service_name>  ama direkt böyle değil
+
+örn turtlesimin clear servicesinde :
+!!
+ros2 service type /clear    
+
+Tüm aktif hizmetlerin türlerini aynı anda görmek için liste komutuna -t olarak kısaltılan --show-types seçeneğini ekleyebilirsiniz:
+
+ros2 service list -t
+-----------------------
+
+Belirli bir türdeki tüm hizmetleri bulmak istiyorsanız şu komutu kullanabilirsiniz:
+
+ros2 service find <type_name>
+
+Örneğin, Empty yazılan tüm hizmetleri şu şekilde bulabilirsiniz:
+
+ros2 service find std_srvs/srv/Empty
+
+--------------------------
+
+ros2 interface show  konusu
+Komut satırından "hizmetler"i arayabilirsiniz, ancak önce giriş argümanlarının yapısını bilmeniz gerekir.
+
+ros2 interface show <type_name>.srv
+
+Bunu /clear hizmetinin türü olan Empty üzerinde dene:
+
+ros2 interface show std_srvs/srv/Empty.srv
+
+
+/spawn hizmetinin istek ve yanıt bağımsız değişkenlerini görmek için şu komutu çalıştırın:
+
+ros2 interface show turtlesim/srv/Spawn
+
+---------------------
+
+aşağıdakileri kullanarak bir service arayabilirsiniz:
+
+ros2 service call <service_name> <service_type> <arguments>
+
+<argümanlar> kısmı isteğe bağlıdır. Örneğin, Boş yazılan hizmetlerin herhangi bir argümanı olmadığını biliyorsunuz:
+!!
+
+Bu komut, kaplumbağanızın çizdiği çizgilerin turtlesim penceresini temizleyecektir.
+!!
+
+ros2 service call /clear std_srvs/srv/Empty
+
+-----------------------------------------
+Şimdi /spawn komutunu çağırıp argümanları ayarlayarak yeni bir kaplumbağa yaratalım: !!!!!!!!
+
+ros2 service call /spawn turtlesim/srv/Spawn "{x: 2, y: 2, theta: 0.2, name: ''}"
+
+bundan sonra kaplumbağa gelecek ve Neler olduğuna dair bu yöntem tarzı görünümü ve ardından hizmet yanıtını alacaksın
+
+---------------------------------
+PARAMETERS
+
+Parameter, bir düğümün yapılandırma değeridir. 
+
+Parametreleri node ayarları olarak düşünebilirsin
+
+bir node parameterleri integer, float, boolean, string ve list olarak depolayabilir.
+
+
+
+Düğümlerinize ait parametreleri görmek için yeni bir terminal açın ve şu komutu girin:
+ros2 param list
+You will see the node namespaces, /teleop_turtle and /turtlesim, followed by each node’s parameters ( Düğüm ad alanlarını, /teleop_turtle ve /turtlesim'i ve ardından her düğümün parametrelerini göreceksiniz: )
+
+çıktı
+/teleop_turtle:
+  scale_angular
+  scale_linear
+  use_sim_time
+/turtlesim:
+  background_b
+  background_g
+  background_r
+  use_sim_time
+  
+Her düğümde use_sim_time parametresi bulunur; kaplumbağalara özgü değil.
+
+simlerine göre /turtlesim parametreleri, Turtlesim penceresinin arka plan rengini RGB renk değerlerini kullanarak belirliyor
+---------------------------
+Bir parametrenin türünü ve geçerli değerini görüntülemek için şu komutu kullanın:
+
+ros2 param get <node_name> <parameter_name>
+
+örn
+
+ros2 param get /turtlesim background_g
+
+
+background_g    
+bir tamsayı değeri tutuyor
+
+Aynı komutu 
+
+If you run the same command on background_r  ve  background_b  üzerinde çalıştırısanız sırasıyla 69 ve 255 değerlerini alırsınız.
+
+-------------------------
+Çalışma zamanında bir parametrenin değerini değiştirmek için şu komutu kullanın:
+
+ros2 param set <node_name> <parameter_name> <value>
+
+/turtlesim’in arka plan rengini değiştirelim: !!
+
+ros2 param set /turtlesim background_r 150
+
+
+sırasıyla bunları yazınca arka plan rengi değişti lila oldu:
+
+source /opt/ros/foxy/setup.bash
+
+ros2 param get /turtlesim background_g
+Integer value is: 86
+
+ros2 param set /turtlesim background_r 150
+Set parameter successful
+
+Parametreleri set komutuyla ayarlamak, onları kalıcı olarak değil, yalnızca mevcut oturumunuzda değiştirecektir.
+
+Bir nodenin mevcut parametre değerlerinin tümünü, daha sonra kullanmak üzere aşağıdaki komutu kullanarak bir dosyaya kaydedebilirsiniz:
+
+ros2 param dump <node_name>
+Mevcut /turtlesim parametreleri konfigürasyonunuzu kaydetmek için şu komutu girin:
+
+ros2 param dump /turtlesim
+
+Your terminal will return the message:
+
+Saving to:  ./turtlesim.yaml
+
+Kabuğunuzun çalıştığı mevcut çalışma dizininde yeni bir dosya bulacaksınız. Bu dosyayı açarsanız aşağıdaki içeriği göreceksiniz:
+turtlesim:
+  ros__parameters:
+    background_b: 255
+    background_g: 86
+    background_r: 150
+    use_sim_time: false
+-------------------------------------------  
+Aşağıdaki komutu kullanarak parametreleri bir dosyadan o anda çalışan bir düğüme yükleyebilirsiniz:
+ros2 param load <node_name> <parameter_file>
+
+örn
+
+ros2 param load /turtlesim ./turtlesim.yaml
+
+"ros2 param dump" ile oluşturulan "turtlesim.yaml" dosyasını "/turtlesim" düğümünün parametrelerine yüklemek için üstteki komutu girin
+
+--------------------------------------------
+Kaydedilen parametre değerlerinizi kullanarak aynı düğümü başlatmak için şunu kullanın:
+ros2 run <package_name> <executable_name> --ros-args --params-file <file_name>
+
+
+Çalışan "turtlesim" düğümünüzü durdurun ve aşağıdakileri kullanarak onu kayıtlı parametrelerinizle yeniden yüklemeyi deneyin:
+
+ros2 run turtlesim turtlesim_node --ros-args --params-file ./turtlesim.yaml
+  
+bunu yeni terminalde source yazıp node yazıp yazdıktan sonra ekleyince direkt mor oldu
+ 
+Turtlesim penceresi her zamanki gibi görünmelidir, ancak daha önce ayarladığınız mor arka planla.
+
+özet
+
+Düğümlerin varsayılan yapılandırma değerlerini tanımlamak için parametreleri vardır. Komut satırından parametre değerlerini alabilir ve ayarlayabilirsiniz. Ayrıca parametre ayarlarını gelecekteki bir oturumda yeniden yüklemek için bir dosyaya kaydedebilirsiniz.
+
+
+ros2 topic pub /turtle1/cmd_vel geometry_msgs/Twist '{linear: {x: 2.0}, angular: {z: 1.57}}'    bu loopta çember çizdirir  **********
+
+
+actions
+
+Actions ROS2'deki iletişim türlerinden biridir ve uzun sürengörevlere yöneliktir.3 bölümden oluşurlar hedef,geri bildirim ve sonuç.
+ goal, feedback, result
+ 
+ Actions topics ve servicese göre oluşturulurlar.
+actions; tek bir yanıt veren services aksine sürekli geri bildirim sağlarlar
+
+actions; publisher-subscriber (yayıncı-abone) modeline benzer bir client-server(istemci-sunucu) modeli kullanır.
+
+2 turtlesim nodes başlat /turtlesim ve /teleop_turtle
+yeni bir terminal aç
+ros2 run turtlesim turtlesim_node
+başka bir terminal aç
+ros2 run turtlesim turtle_teleop_key
+
+/teleop_turtle node unu başlattığında şu mesaj gelir
+
+Use arrow keys to move the turtle.
+Use G|B|V|C|D|E|R|T keys to rotate to absolute orientations. 'F' to cancel a rotation.
+
+US qwerty klavyede GBVCDERT harf tuşlarının F tuşunun etrafında bir kutu oluşturuyor 
+
+her keyin F etrafındaki konumu turtlesimdeki yönlendirmeye karşılık gelir
+
+örneğin E kaplumbağanın yönünü sol üst köşeye döndürür
+
+kaplumbağa hareket ederken önce c sonra F tuşuna bastığında   kaplumbağa durur
+[INFO] [turtlesim]: Rotation goal canceled yazar
+
+
+D ve G  tuşları da durdurur.
+bu yalnızca client-side(teleoptaki girdiniz) bir hedefi durdurmakla kalmaz aynı zamanda server-side(/turtlesim node)  de durdurabilir.
+[WARN] [turtlesim]: Rotation goal received before a previous goal finished. Aborting previous goal yazar
+
+Bir düğümün sağladığı eylemlerin listesini görmek için yeni bir terminal açın ve şu komutu çalıştırın:
+
+ros2 node info /turtlesim
+
+ROS grafiğindeki tüm eylemleri tanımlamak için şu komutu çalıştırın:
+
+ros2 action list
+---------------------
+actionsların,topics ve services e benzer türleri vardır.
+
+ros2 action list -t
+-----------------
+/turtle1/rotate_absolute eylemini şu komutla daha ayrıntılı olarak inceleyebilirsiniz:
+
+ros2 action info /turtle1/rotate_absolute
+Bu bize daha önce her düğümde ros2 düğüm bilgisini çalıştırırken öğrendiklerimizi anlatır
+-------------------
+
+ros2 interface show
+Bir eylem hedefini kendiniz göndermeden veya gerçekleştirmeden önce ihtiyaç duyacağınız bir bilgi daha, eylem türünün yapısıdır.
+
+ros2 action list -t komutunu çalıştırırken /turtle1/rotate_absolute tipini tanımladığınızı hatırlayın. Terminalinize eylem türüyle birlikte aşağıdaki komutu girin:
+
+ros2 interface show turtlesim/action/RotateAbsolute
+
+ çıktı
+ 
+# The desired heading in radians
+float32 theta
+---
+# The angular displacement in radians to the starting position
+float32 delta
+---
+# The remaining rotation in radians
+float32 remaining
+
+----------
+ros2 action send_goal
+
+aşağıdaki söz dizimi ile komut satırından bir action goal (eylem hedefi) gönderelim:
+
+ros2 action send_goal <action_name> <action_type> <values>
+
+<values>'in YAML biçiminde olması gerekir.
+
+Turtlesim penceresine dikkat edin ve terminalinize aşağıdaki komutu girin:
+
+KAPLUMBAĞA DÖNDÜRME
+
+ros2 action send_goal /turtle1/rotate_absolute turtlesim/action/RotateAbsolute "{theta: 1.57}"
+
+
+Terminalinizde kaplumbağanın döndüğünü ve aşağıdaki mesajı görmelisiniz:
+
+^^^^
+Waiting for an action server to become available...
+Sending goal:
+   theta: 1.57
+
+Goal accepted with ID: f8db8f44410849eaa93d3feb747dd444
+
+Result:
+  delta: -1.568000316619873
+
+Goal finished with status: SUCCEEDED
+^^^^^
+
+Tüm goalsların, geri dönüş mesajında ​​gösterilen benzersiz bir kimliği vardır. Ayrıca, başlangıç ​​konumuna göre yer değiştirme olan delta adlı bir alan olan sonucu da görebilirsiniz.
+
+-------------
+
+ros2 action send_goal /turtle1/rotate_absolute turtlesim/action/RotateAbsolute "{theta: -1.57}" --feedback
+
+Bu hedefin geri bildirimini görmek için çalıştırdığınız son komuta --feedback ekleyin. Öncelikle tetanın değerini değiştirdiğinizden emin olun. Önceki komutu çalıştırdıktan sonra kaplumbağa zaten 1,57 radyan yönünde olacaktır, dolayısıyla siz yeni bir tetayı geçmedikçe hareket etmeyecektir.
+
+--------------------
+özet
+Actions uzun süren görevleri yürütmenize olanak tanıyan, düzenli geri bildirim sağlayan ve iptal edilebilen serviceslere benzer.
+
+Bir robot sistemi muhtemelen navigasyon için actionsları kullanır
+bir action goal bir robota bir konuma gitmesini söyleyebilir.
+Robot konuma doğru giderken, yol boyunca güncellemeler (yani feedback-geri bildirim) gönderebilir ve hedefine ulaştığında nihai sonuç mesajını gönderebilir.
+
+-----------------------------------------------------------
+Using    rqt_console    to view logs
+
+rqt_console, ROS 2'deki  log messages ları incelemek için kullanılan bir GUI aracıdır.
+
+rqt_console ile bu mesajları zaman içinde toplayabilir, daha yakından ve daha düzenli bir şekilde görüntüleyebilir, filtreleyebilir, kaydedebilir ve hatta kaydedilen dosyaları farklı bir zamanda incelemek için yeniden yükleyebilirsiniz.
+
+
+ros2 run rqt_console rqt_console
+
+rqt_console penceresi açılacaktır
+
+Konsolun ilk bölümü sisteminizden gelen günlük mesajlarının görüntüleneceği yerdir.
+
+ortada, önem düzeylerini hariç tutarak mesajları filtreleme seçeneğiniz vardır. Sağdaki artı işareti düğmesini kullanarak daha fazla hariç tutma filtresi de ekleyebilirsiniz.
+
+Alt kısım, girdiğiniz bir dizeyi içeren mesajları vurgulamak içindir. Bu bölüme daha fazla filtre de ekleyebilirsiniz.
+
+Şimdi Turtlesim'i yeni bir terminalde aşağıdaki komutla başlatın:
+ros2 run turtlesim turtlesim_node
+------------------
+rqt_console'daki mesaj
+
+rqt_console'un görüntüleyeceği günlük mesajları üretmek için kaplumbağanın duvara çarpmasını sağlayalım. Yeni bir terminalde, aşağıdaki ros2 konu pub komutunu girin: **************************************
+
+ros2 topic pub -r 1 /turtle1/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 2.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}"
+
+bunu yazınca loopta sağa sürekli ilerler ve rqt console da hata mesajları gelir
+
+Kaplumbağanızın duvara çarpmasını durdurmak için 
+ros2 topic pub komutunu çalıştırdığınız terminalde yani sürekli hata veren ekranda ctrl c ile çık
+
+ROS 2’s logger levels
+seviyeleri önem derecesine göre:
+Fatal
+Error
+Warn
+Info
+Debug
+
+
+Fatal  Ölümcül
+mesajlar sistemin kendisini zarardan korumaya çalışmak için sonlandırılacağını belirtir.
+
+Erro Hata mesajları, sisteme mutlaka zarar vermeyecek ancak sistemin düzgün çalışmasını engelleyen önemli sorunları belirtir.
+
+warn
+Uyarı mesajları, daha derin bir sorunu temsil edebilecek ancak işlevselliğe doğrudan zarar vermeyen beklenmeyen etkinlikleri veya ideal olmayan sonuçları belirtir.
+
+
+Info 
+Bilgi mesajları, sistemin beklendiği gibi çalıştığına dair görsel bir doğrulama görevi gören olay ve durum güncellemelerini gösterir.
+
+debug
+Hata ayıklama mesajları, sistem yürütme sürecinin tamamını adım adım detaylandırır.
+
+Varsayılan seviye info
+Yalnızca varsayılan önem düzeyindeki ve daha ciddi düzeylerdeki iletileri göreceksiniz.
+
+Normally, only Debug messages are hidden
+çünkü
+info'dan daha az ciddi olan tek düzeydir.
+
+Örneğin, varsayılan düzeyi warn olarak ayarlarsanız yaknızca warn error ve fatal mesajlarını görürsünüz.
+
+You can set the default 'logger' level when you first run the /turtlesim node using remapping. Enter the following command in your terminal:
+Yeniden eşlemeyi kullanarak /turtlesim düğümünü ilk kez çalıştırdığınızda varsayılan 'kaydedici' düzeyini ayarlayabilirsiniz. Terminalinize aşağıdaki komutu girin:
+
+ros2 run turtlesim turtlesim_node --ros-args --log-level WARN
+
+Artık Turlusim'i en son başlattığınızda konsolda ortaya çıkan ilk Bilgi seviyesi mesajlarını görmeyeceksiniz. Bunun nedeni, Bilgi mesajlarının yeni varsayılan önem derecesi olan Uyarı'dan daha düşük önceliğe sahip olmasıdır.
+
+
+
+Özet
+
+Sisteminizdeki günlük mesajlarını yakından incelemeniz gerekiyorsa rqt_console çok yardımcı olabilir. Genellikle bir şeyin nerede ters gittiğini ve buna yol açan olaylar dizisini öğrenmek için günlük mesajlarını birçok nedenden dolayı incelemek isteyebilirsiniz.
+-------------------------------------------------------------
+
+Launching nodes  düğümlerin başlatılması
+
+ Aynı anda birden fazla düğümü başlatmak için bir komut satırı aracı kullanın.
+ 
+Giriş derslerinin çoğunda çalıştırdığınız her yeni düğüm için yeni terminaller açıyorsunuz. Giderek daha fazla düğümün aynı anda çalıştığı daha karmaşık sistemler oluşturdukça, terminalleri açmak ve yapılandırma ayrıntılarını yeniden girmek sıkıcı hale gelir.
+
+Launch files Başlatma dosyaları, ROS 2 düğümlerini içeren çok sayıda yürütülebilir dosyayı aynı anda başlatmanıza ve yapılandırmanıza olanak tanır
+
+Tek bir başlatma dosyasını ros2 launch komutuyla çalıştırmak, tüm sisteminizi (tüm düğümler ve bunların yapılandırmaları) aynı anda başlatacaktır.
+
+---------------
+
+ros2 launch turtlesim multisim.launch.py
+
+iki kaplumbağa açılacaktır *****
+
+iki turtlesim  nodes
+------------------
+
+(Optional) Control the Turtlesim Nodes
+(İsteğe bağlı) Turtlesim Düğümlerini Kontrol Edin
+
+Artık bu düğümler çalıştığına göre, onları diğer ROS 2 düğümleri gibi kontrol edebilirsiniz. Örneğin, iki ek terminal açıp aşağıdaki komutları çalıştırarak kaplumbağaların zıt yönlere gitmesini sağlayabilirsiniz:
+
+2.terminali aç
+
+ros2 topic pub  /turtlesim1/turtle1/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 2.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 1.8}}"
+
+3.terminali aç
+
+ros2 topic pub  /turtlesim2/turtle1/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 2.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: -1.8}}"
+
+bu komutlarla bir kaplumbağa sağa çember loop diğeri sola loop şeklinde döner
+
+özet
+tek komutla iki turtlesim nodes çalıştırdık
+
+--------------------------------------------
+
+Recording and playing back data 
+verileri kaydetme ve oynatma
+
+Bir konu hakkında yayınlanan verileri kaydedin, böylece istediğiniz zaman tekrar oynatabilir ve inceleyebilirsiniz.
+
+ros2 bag
+ sisteminizdeki konularla ilgili yayınlanan verileri kaydetmek için kullanılan bir komut satırı aracıdır. 
+ Herhangi bir sayıda konu hakkında aktarılan verileri biriktirir ve bir veritabanına kaydeder. Daha sonra testlerinizin ve deneylerinizin sonuçlarını yeniden oluşturmak için verileri yeniden oynatabilirsiniz. 
+ 
+ ROS'u Linux'ta Debian paketlerinden yüklediyseniz ve sisteminiz komutu tanımıyorsa, şu şekilde yükleyin:
+
+sudo apt-get install ros-foxy-ros2bag \
+                     ros-foxy-rosbag2-converter-default-plugins \
+                     ros-foxy-rosbag2-storage-default-plugins
+                     
+                     
+ You’ll be recording your keyboard input in the turtlesim system to save and replay later on=Daha sonra kaydetmek ve tekrar oynatmak için klavye girişinizi kaplumbağasim sistemine kaydedeceksiniz
+ 
+ kayıtlarımızı saklamak için yeni bir dizin de oluşturalım:
+ 
+ mkdir bag_files
+cd bag_files
+
+-------------
+
+ros2 topic list
+
+
+/turtle1/cmd_vel'in yayınladığı verileri görmek için şu komutu çalıştırın:
+
+ros2 topic echo /turtle1/cmd_vel
+
+Teleop tarafından hiçbir veri yayınlanmadığından ilk başta hiçbir şey görünmeyecek. Teleop'u çalıştırdığınız terminale dönün ve onu seçerek aktif olmasını sağlayın. Kaplumbağayı hareket ettirmek için ok tuşlarını kullanın; ros2topic echo'yu çalıştıran terminalde verilerin yayınlandığını göreceksiniz.
+
+çıktı
+
+linear:
+  x: 2.0
+  y: 0.0
+  z: 0.0
+angular:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+  ---
+  
+ 
+ros2 bag record
+
+  Bir konuya yayınlanan verileri kaydetmek için komut sözdizimini kullanın:
+  
+  ros2 bag record <topic_name>
+  
+  Bu komutu seçtiğiniz konu üzerinde çalıştırmadan önce yeni bir terminal açın ve daha önce oluşturduğunuz bag_files dizinine geçin, çünkü rosbag dosyası çalıştırdığınız dizine kaydedilecektir.
+  
+  
+  ros2 bag record /turtle1/cmd_vel 
+  çalıştır
+  
+  Artık ros2 çantası /turtle1/cmd_vel konusunda yayınlanan verileri kaydediyor. Teleop terminaline dönün ve kaplumbağayı tekrar hareket ettirin. Hareketler önemli değil ancak verileri daha sonra tekrar oynattığınızda görmek için tanınabilir bir model oluşturmaya çalışın.
+  
+  Kaydı durdurmak için Ctrl+C tuşlarına basın.
+
+Veriler, rosbag2_yıl_ay_gün-saat_dakika_saniye şeklinde bir adla yeni bir çanta dizininde toplanacaktır. Bu dizin, kaydedilen formattaki çanta dosyasıyla birlikte bir metadata.yaml içerecektir.
+
+
+Birden fazla konuyu kaydedin
+
+Ayrıca birden fazla topics kaydedebilir ve ros2 çantasının kaydedildiği dosyanın adını değiştirebilirsiniz.
+
+Aşağıdaki komutu çalıştırın:
+  
+  ros2 bag record -o subset /turtle1/cmd_vel /turtle1/pose
+  
+Aynı anda birden fazla konuyu kaydetmek için her konuyu bir boşlukla ayırarak listelemeniz yeterlidir.
+  
+  Aşağıdakileri çalıştırarak kaydınızla ilgili ayrıntıları görebilirsiniz:
+  
+  ros2 bag info subset
+
+
